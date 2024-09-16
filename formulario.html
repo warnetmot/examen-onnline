@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Pregunta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"], .back-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+        input[type="submit"]:hover, .back-button:hover {
+            background-color: #218838;
+        }
+        .back-button {
+            background-color: #007bff;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        .answers-container {
+            margin: 10px 0;
+        }
+        .answers-container input[type="text"] {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Agregar Pregunta</h1>
+        <form method="POST" action="conexion.php">
+            <label for="question_text">Pregunta:</label>
+            <input type="text" id="question_text" name="question_text" required>
+        
+            <label for="max_score">Puntuación máxima:</label>
+            <input type="number" id="max_score" name="max_score" required>
+        
+            <label>Respuestas:</label>
+            <div class="answers-container">
+                <input type="text" name="answers[]" required>
+                <input type="text" name="answers[]" required>
+                <input type="text" name="answers[]" required>
+                <input type="text" name="answers[]" required>
+            </div>
+        
+            <label for="correct_answer">Índice de la respuesta correcta (0-3):</label>
+            <input type="number" id="correct_answer" name="correct_answer" min="0" max="3" required>
+        
+            <input type="submit" value="Crear Pregunta">
+            <a href="index.php" class="back-button">Volver Atrás</a>
+        </form>
+    </div>
+</body>
+</html>
