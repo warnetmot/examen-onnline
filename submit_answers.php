@@ -10,36 +10,47 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-$participant_id = $_POST['participant_id'] ?? 1; 
+$participant_id = $_POST['participant_id']; 
+
+if (!isset($participant_id) || empty($participant_id)) {
+    die("Error: ID de participante no válido.");
+}
 
 $total_score = 0;
 
-//bucle para martener la actualisacion de los resultados en simuktaneo de todas las personas que an dado \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 foreach ($_POST as $question_name => $selected_answer_id) {
     if (strpos($question_name, 'question_') === 0) {
         $question_id = str_replace('question_', '', $question_name);
 
-        $sql = "SELECT is_correct, max_score FROM answers 
-                JOIN questions ON answers.question_id = questions.id 
-                WHERE answers.id = $selected_answer_id";
-        $result = $conn->query($sql);
+        // Consulta preparada para proteger contra inyecciones SQL
+        $stmt = $conn->prepare("SELECT is_correct, max_score FROM answers 
+                                JOIN questions ON answers.question_id = questions.id 
+                                WHERE answers.id = ?");
+        $stmt->bind_param("i", $selected_answer_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if ($row['is_correct']) {
-                $total_score += $row['max_score'];  
+                $total_score += $row['max_score'];
             }
         }
+        $stmt->close();
     }
 }
 
-$sql_insert = "INSERT INTO results (participant_id, total_score) VALUES ('$participant_id', '$total_score')";
-if ($conn->query($sql_insert) === TRUE) {
+// Inserción del resultado utilizando consulta preparada
+$stmt_insert = $conn->prepare("INSERT INTO results (participant_id, total_score) VALUES (?, ?)");
+$stmt_insert->bind_param("ii", $participant_id, $total_score);
+
+if ($stmt_insert->execute()) {
     $message = "Puntuación total obtenida: " . $total_score;
 } else {
-    $message = "Error al guardar el puntaje: " . $conn->error;
+    $message = "Error al guardar el puntaje: " . $stmt_insert->error;
 }
 
+$stmt_insert->close();
 $conn->close();
 ?>
 

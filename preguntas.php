@@ -12,6 +12,9 @@ if ($conn->connect_error) {
 
 $sql = "SELECT * FROM questions";
 $result = $conn->query($sql);
+
+// Asegúrate de tener el valor de $participant_id aquí
+$participant_id = 1; // Ejemplo estático, reemplazar con tu lógica de sesión o base de datos.
 ?>
 
 <!DOCTYPE html>
@@ -76,6 +79,8 @@ $result = $conn->query($sql);
     <div class="container">
         <h1>Examen en Línea</h1>
         <form method="POST" action="submit_answers.php">
+            <input type="hidden" name="participant_id" value="<?php echo htmlspecialchars($participant_id); ?>">
+
             <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <div class="question">
@@ -94,6 +99,8 @@ $result = $conn->query($sql);
                                     <?php echo htmlspecialchars($answer['answer_text']); ?>
                                 </div>
                             <?php endwhile; ?>
+                        <?php else: ?>
+                            <p>No hay respuestas disponibles para esta pregunta.</p>
                         <?php endif; ?>
                     </div>
                 <?php endwhile; ?>
